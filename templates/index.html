@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Visit Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .admin-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 i {
+            color: #4facfe;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: #4facfe;
+            background: #f0f9ff;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 -40px -40px -40px;
+        }
+
+        .submit-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .admin-link {
+                position: relative;
+                top: auto;
+                right: auto;
+                display: inline-block;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin" class="admin-link">
+                <i class="fas fa-user-shield"></i> Admin Login
+            </a>
+            <h1><i class="fas fa-seedling"></i> Farm Visit Form</h1>
+            <p>Comprehensive farm monitoring and assessment system</p>
+        </div>
+
+        <div class="form-container">
+            <div id="alert-container"></div>
+            
+            <form id="farmForm">
+                <div class="section">
+                    <h2><i class="fas fa-user"></i> 1. Farmer Details</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="farmerName">Farmer Name *</label>
+                            <input type="text" id="farmerName" name="farmerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="farmID">Farm ID *</label>
+                            <input type="text" id="farmID" name="farmID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Village / Location</label>
+                            <input type="text" id="location" name="location">
+                        </div>
+                        <div class="form-group">
+                            <label for="gps">GPS Coordinates</label>
+                            <input type="text" id="gps" name="gps" placeholder="e.g., -1.2921, 36.8219">
+                        </div>
+                        <div class="form-group">
+                            <label for="size">Farm Size (acres)</label>
+                            <input type="number" id="size" name="size" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Farm Type</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="crop" name="farmType" value="Crop">
+                                <label for="crop">Crop</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="livestock" name="farmType" value="Livestock">
+                                <label for="livestock">Livestock</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="mixed" name="farmType" value="Mixed">
+                                <label for="mixed">Mixed</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-calendar-alt"></i> 2. Visit Details</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="visitDate">Date of Visit *</label>
+                            <input type="date" id="visitDate" name="visitDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="visitType">Visit Type</label>
+                            <select id="visitType" name="visitType">
+                                <option value="">Select visit type</option>
+                                <option value="Routine">Routine</option>
+                                <option value="Emergency">Emergency</option>
+                                <option value="Follow-up">Follow-up</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officerName">Officer Name *</label>
+                            <input type="text" id="officerName" name="officerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeSpent">Time Spent (hours)</label>
+                            <input type="number" id="timeSpent" name="timeSpent" step="0.5" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-eye"></i> 3. Observations</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="mainCrops">Main Crops</label>
+                            <input type="text" id="mainCrops" name="mainCrops" placeholder="e.g., Maize, Beans, Tomatoes">
+                        </div>
+                        <div class="form-group">
+                            <label for="cropStage">Crop Stage</label>
+                            <select id="cropStage" name="cropStage">
+                                <option value="">Select crop stage</option>
+                                <option value="Planting">Planting</option>
+                                <option value="Vegetative">Vegetative</option>
+                                <option value="Flowering">Flowering</option>
+                                <option value="Fruiting">Fruiting</option>
+                                <option value="Harvesting">Harvesting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="livestockType">Livestock Type</label>
+                            <input type="text" id="livestockType" name="livestockType" placeholder="e.g., Cattle, Poultry, Goats">
+                        </div>
+                        <div class="form-group">
+                            <label for="animalCount">Number of Animals</label>
+                            <input type="number" id="animalCount" name="animalCount" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Crop Issues</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pests" name="cropIssues" value="Pests">
+                                <label for="pests">Pests</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="diseases" name="cropIssues" value="Diseases">
+                                <label for="diseases">Diseases</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="nutrient" name="cropIssues" value="Nutrient Deficiency">
+                                <label for="nutrient">Nutrient Deficiency</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="germination" name="cropIssues" value="Poor Germination">
+                                <label for="germination">Poor Germination</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="water" name="cropIssues" value="Water Stress">
+                                <label for="water">Water Stress</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Livestock Issues</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="illness" name="livestockIssues" value="Illness">
+                                <label for="illness">Illness</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="parasites" name="livestockIssues" value="Parasites">
+                                <label for="parasites">Parasites</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="malnutrition" name="livestockIssues" value="Malnutrition">
+                                <label for="malnutrition">Malnutrition</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="housing" name="livestockIssues" value="Poor Housing">
+                                <label for="housing">Poor Housing</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-lightbulb"></i> 4. Recommendations</h2>
+                    <div class="form-group">
+                        <label for="advice">Advice Given</label>
+                        <textarea id="advice" name="advice" rows="4" placeholder="Enter detailed advice and recommendations..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">Upload Photos</label>
+                        <input type="file" id="photos" name="photos" accept="image/*" multiple>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2><i class="fas fa-arrow-right"></i> 5. Follow-Up</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="followUp" name="followUp">
+                                <label for="followUp">Further Visit Needed</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="followUpDate">Proposed Date</label>
+                            <input type="date" id="followUpDate" name="followUpDate">
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="training" name="training">
+                                <label for="training">Training Needed</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="referral" name="referral">
+                                <label for="referral">Referral to Vet/Agronomist</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="followUpNotes">Additional Notes</label>
+                        <textarea id="followUpNotes" name="followUpNotes" rows="3" placeholder="Any additional notes or observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Submitting form...</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="submit-section">
+            <button type="submit" form="farmForm" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Visit
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('farmForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loading = document.getElementById('loading');
+            const submitBtn = document.querySelector('.submit-btn');
+            const alertContainer = document.getElementById('alert-container');
+            
+            // Show loading
+            loading.style.display = 'block';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            
+            // Clear previous alerts
+            alertContainer.innerHTML = '';
+            
+            try {
+                const formData = new FormData(this);
+                
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> ${result.message}
+                        </div>
+                    `;
+                    
+                    // Reset form
+                    this.reset();
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                // Show error message
+                alertContainer.innerHTML = `
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> Error: ${error.message}
+                    </div>
+                `;
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                // Hide loading
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Visit';
+            }
+        });
+
+        // Set today's date as default for visit date
+        document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html> 
