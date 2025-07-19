@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, s
 import json
 import os
 from datetime import datetime
+from fpdf import FPDF
+from flask import make_response
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this-in-production'  # Change this in production
@@ -119,6 +121,63 @@ def delete_entry(entry_id):
     
     except Exception as e:
         return jsonify({"success": False, "message": f"Error deleting entry: {str(e)}"}), 500
+
+@app.route('/admin/download/<entry_id>')
+def download_entry_pdf(entry_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({"success": False, "message": "Not authorized"}), 401
+
+    ensure_data_file()
+    with open(DATA_FILE, 'r') as f:
+        data = json.load(f)
+
+    entry = next((e for e in data if e.get('id') == entry_id), None)
+    if not entry:
+        return jsonify({"success": False, "message": "Entry not found"}), 404
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Helvetica', 'B', 16)
+    pdf.cell(0, 10, 'Farm Visit Report', ln=True, align='C')
+    pdf.ln(10)
+    pdf.set_font('Helvetica', '', 12)
+
+    def add_field(label, value):
+        value = str(value) if value not in [None, ''] else 'N/A'
+        pdf.set_font('Helvetica', 'B', 12)
+        pdf.multi_cell(0, 8, f'{label}: {value}')
+        pdf.set_font('Helvetica', '', 12)
+
+    add_field('Farmer Name', entry.get('farmerName', ''))
+    add_field('Farm ID', entry.get('farmID', ''))
+    add_field('Phone Number', entry.get('phoneNumber', 'N/A'))
+    add_field('Location', entry.get('location', 'N/A'))
+    add_field('GPS', entry.get('gps', 'N/A'))
+    add_field('Farm Size', f"{entry.get('size', 'N/A')} hectares")
+    add_field('Farm Type', ', '.join(entry.get('farmType', [])) or 'N/A')
+    add_field('Visit Date', entry.get('visitDate', ''))
+    add_field('Visit Type', entry.get('visitType', 'N/A'))
+    add_field('Officer Name', entry.get('officerName', ''))
+    add_field('Time Spent', f"{entry.get('timeSpent', 'N/A')} hours")
+    add_field('Main Crops', entry.get('mainCrops', 'N/A'))
+    add_field('Crop Stage', entry.get('cropStage', 'N/A'))
+    add_field('Livestock Type', entry.get('livestockType', 'N/A'))
+    add_field('Animal Count', entry.get('animalCount', '0'))
+    add_field('Crop Issues', ', '.join(entry.get('cropIssues', [])) or 'N/A')
+    add_field('Livestock Issues', ', '.join(entry.get('livestockIssues', [])) or 'N/A')
+    add_field('Advice', entry.get('advice', 'N/A'))
+    add_field('Follow-up', 'Needed' if entry.get('followUp') else 'Not Required')
+    add_field('Follow-up Date', entry.get('followUpDate', ''))
+    add_field('Training', 'Yes' if entry.get('training') else 'No')
+    add_field('Referral', 'Yes' if entry.get('referral') else 'No')
+    add_field('Additional Notes', entry.get('followUpNotes', ''))
+    add_field('Timestamp', entry.get('timestamp', ''))
+
+    pdf_output = pdf.output(dest='S').encode('latin1')
+    response = make_response(pdf_output)
+    response.headers.set('Content-Type', 'application/pdf')
+    response.headers.set('Content-Disposition', 'attachment', filename=f"farm_visit_{entry_id}.pdf")
+    return response
 
 if __name__ == '__main__':
     ensure_data_file()

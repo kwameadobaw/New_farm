@@ -402,6 +402,9 @@
                                 <div class="entry-date">{{ entry.visitDate }} • {{ entry.officerName }}</div>
                             </div>
                             <div class="entry-actions">
+                                <a class="btn btn-primary" href="/admin/download/{{ entry.id }}" target="_blank" style="border: 3px solid red; background: yellow; color: black !important; font-weight: bold;">
+                                    <i class="fas fa-file-pdf"></i> Download PDF
+                                </a>
                                 <button class="btn btn-danger" onclick="deleteEntry('{{ entry.id }}')">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
@@ -443,7 +446,7 @@
                                 <h4><i class="fas fa-calendar"></i> Visit Details</h4>
                                 <div class="entry-field">
                                     <div class="field-label">Visit Type:</div>
-                                    <div class="field-value">{{ entry.visitType or 'N/A' }}</div>
+                                    <div class="field-value visit-type-value">{{ entry.visitType or 'N/A' }}</div>
                                 </div>
                                 <div class="entry-field">
                                     <div class="field-label">Time Spent:</div>
@@ -559,7 +562,8 @@
 
             entries.forEach(entry => {
                 const text = entry.textContent.toLowerCase();
-                const entryVisitType = entry.querySelector('.field-value').textContent.trim();
+                const entryVisitTypeElem = entry.querySelector('.visit-type-value');
+                const entryVisitType = entryVisitTypeElem ? entryVisitTypeElem.textContent.trim() : '';
                 const entryDate = entry.querySelector('.entry-date').textContent.split('•')[0].trim();
 
                 const matchesSearch = text.includes(searchTerm);
@@ -587,7 +591,7 @@
 
             visibleEntries.forEach(entry => {
                 const date = entry.querySelector('.entry-date').textContent.split('•')[0].trim();
-                const visitType = entry.querySelector('.field-value').textContent.trim();
+                const visitType = entry.querySelector('.visit-type-value').textContent.trim();
                 const hasFollowUp = entry.querySelector('.tag').textContent.includes('Needed');
 
                 if (date.startsWith(new Date().toISOString().slice(0, 7))) {
